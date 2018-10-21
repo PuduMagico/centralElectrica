@@ -44,6 +44,17 @@ class ListaNodos:
             nodoActual = nodoActual.siguiente
         return l
 
+    def getConsumoPorComuna(self, comuna):
+        total_count = 0
+        if self.nodo and self.nodo.comuna == comuna and self.nodo.clase != "Generadora":
+            total_count = total_count + self.nodo.consumo
+        if self.siguiente:
+            total_count = total_count + self.siguiente.getConsumoPorComuna(comuna)
+        if self.nodo.hijos:
+            total_count = total_count + self.nodo.hijos.getConsumoPorComuna(comuna)
+
+        return total_count
+
 
 class Red:
     def __init__(self):
@@ -127,6 +138,19 @@ class Red:
                     hijoActual.nodo.simulado = 1
                 hijoActual = hijoActual.siguiente
             nodoActual = nodoActual.siguiente
+
+    def getConsumoPorComuna(self, comuna):
+        nodo_actual = self.generadoras
+        total_count = 0
+        if nodo_actual.nodo and nodo_actual.nodo.comuna == comuna and nodo_actual.nodo.clase != "Generadora":
+            total_count = total_count + nodo_actual.nodo.consumo
+        if nodo_actual.siguiente:
+            total_count = total_count + nodo_actual.siguiente.getConsumoPorComuna(comuna)
+        if nodo_actual.nodo.hijos:
+            total_count = total_count + nodo_actual.nodo.hijos.getConsumoPorComuna(comuna)
+
+        percentage = total_count / self.demandaTotal() * 100
+        return total_count, percentage
 
 
 class Nodo:
@@ -456,9 +480,3 @@ casa2.agregar(casa3, 15)
 casa4.agregar(casa6, 10)
 casa5.agregar(casa6, 5)
 
-print(red.demandaTotal())
-print(ele1.demanda())
-
-print(casa6.demanda())
-
-print(red.distribuir())
