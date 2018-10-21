@@ -19,9 +19,12 @@ class ListaDistancias:
 
     def encontrarDistancia(self, id):
         actual = self
-        while actual.id != id:
+        while actual.id != id and actual is not None:
             actual = actual.siguiente
-        return actual.val
+        if actual:
+            return actual.val
+        else:
+            raise Exception("id not found exception")
 
 
 class ListaNodos:
@@ -38,7 +41,7 @@ class ListaNodos:
     def largoLista(self):
         l = 0
         nodoActual = self
-        if nodoActual.nodo == None:
+        if nodoActual.nodo is not None:
             return 0
         while nodoActual != None:
             l += 1
@@ -408,6 +411,7 @@ class Distribucion(Nodo):
 
             return self.consumo + potenciaHijos
 
+
 def load_distribucion(filename, container):
     with open('data/' + filename, 'r') as csvfile:
         file = csv.reader(csvfile)
@@ -416,7 +420,6 @@ def load_distribucion(filename, container):
             [id, nombre, sistema, provincia, comuna, consumo] = row
             newItem = Distribucion(id, nombre, sistema, provincia, comuna, consumo)
             container.append(newItem)
-
 
 
 class Casa(Nodo):
@@ -434,16 +437,21 @@ class Casa(Nodo):
 
     def agregar(self, nodo, dist):
         # and noLoop(nodo,Self):
+        # TODO: if conectado con distribuidora de la misma comuna
         if nodo.clase == "Casa":
-            nodo.proveedores += 1
-            if self.hijos == None:
-                self.hijos = ListaNodos(nodo)
+            if nodo.comuna == self.comuna:
+                nodo.proveedores += 1
+                if self.hijos == None:
+                    self.hijos = ListaNodos(nodo)
+                else:
+                    self.hijos.añadir(nodo)
+                if self.distancias == None:
+                    self.distancias = ListaDistancias(nodo.id, dist)
+                else:
+                    self.distancias.añadir(nodo.id, dist)
+                return
             else:
-                self.hijos.añadir(nodo)
-            if self.distancias == None:
-                self.distancias = ListaDistancias(nodo.id, dist)
-            else:
-                self.distancias.añadir(nodo.id, dist)
+                raise Exception("different commune exception")
 
         elif not noLoop(nodo, Self):
             print("loop")
