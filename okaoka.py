@@ -197,11 +197,6 @@ def load_generadora(filename, container):
             container.append(newItem)
 
 
-generadores = []
-load_generadora('centrales.csv', generadores)
-for a in generadores:
-    print(a)
-
 class Elevadora(Nodo):
     def __init__(self, id, nombre, sistema, provincia, comuna, consumo):
         Nodo.__init__(self, id, sistema, provincia, comuna)
@@ -282,12 +277,6 @@ class Elevadora(Nodo):
             self.hijos.nodo.simular()
             hijoActual = hijoActual.siguiente
 
-    def __init__(self, id, nombre, sistema, provincia, comuna, consumo):
-        Nodo.__init__(self, id, sistema, provincia, comuna)
-        self.nombre = nombre
-        self.consumo = consumo
-        self.proveedores = 0
-        self.clase = "Elevadora"
 
 def load_elevadora(filename, container):
     with open('data/' + filename, 'r') as csvfile:
@@ -297,11 +286,6 @@ def load_elevadora(filename, container):
             [id, nombre, sistema, provincia, comuna, consumo] = row
             newItem = Elevadora(id, nombre, sistema, provincia, comuna, consumo)
             container.append(newItem)
-
-generadores = []
-load_generadora('centrales.csv', generadores)
-for a in generadores:
-    print(a)
 
 class Transmision(Nodo):
     def __init__(self, id, nombre, sistema, provincia, comuna, consumo):
@@ -372,6 +356,17 @@ class Transmision(Nodo):
         self.hijos.nodo.simular()
 
 
+
+def load_transmision(filename, container):
+    with open('data/' + filename, 'r') as csvfile:
+        file = csv.reader(csvfile)
+        next(file, None)  # skip the first line as it contains headers
+        for row in file:
+            [id, nombre, sistema, provincia, comuna, consumo] = row
+            newItem = Transmision(id, nombre, sistema, provincia, comuna, consumo)
+            container.append(newItem)
+
+
 class Distribucion(Nodo):
     def __init__(self, id, nombre, sistema, provincia, comuna, consumo):
         Nodo.__init__(self, id, sistema, provincia, comuna)
@@ -412,6 +407,16 @@ class Distribucion(Nodo):
                 hijoActual = hijoActual.siguiente
 
             return self.consumo + potenciaHijos
+
+def load_distribucion(filename, container):
+    with open('data/' + filename, 'r') as csvfile:
+        file = csv.reader(csvfile)
+        next(file, None)  # skip the first line as it contains headers
+        for row in file:
+            [id, nombre, sistema, provincia, comuna, consumo] = row
+            newItem = Distribucion(id, nombre, sistema, provincia, comuna, consumo)
+            container.append(newItem)
+
 
 
 class Casa(Nodo):
